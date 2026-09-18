@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Defuse & Escape</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="fxCanvas"></canvas>
+
+    <div id="startScreen" class="screen active">
+      <div class="panel start-card">
+        <p class="kicker">Containment breach</p>
+        <h1 class="game-title title-font">Defuse &amp; Escape</h1>
+        <div class="subhead">One minute to survive</div>
+
+        <div class="badges">
+          <span class="badge">Best: <span id="bestTime">--</span></span>
+          <span class="badge">Wrong inputs: 3</span>
+        </div>
+
+        <button id="startButton" class="primary-btn" style="margin-top: 2.25rem;">Start Escape</button>
+      </div>
+    </div>
+
+    <div id="gameScreen" class="screen">
+      <div class="panel game-shell">
+        <header class="topbar">
+          <div class="brand-mark title-font">Bomb room</div>
+          <div class="timer-wrap">
+            <div class="timer-label title-font">Timer</div>
+            <div id="timer">60.00</div>
+            <div class="danger-meter" aria-label="Bomb danger level">
+              <span id="dangerMeterFill"></span>
+            </div>
+          </div>
+        </header>
+
+        <div class="game-layout">
+          <div class="panel-stack">
+            <div class="panel slot-panel">
+              <h2 class="panel-title title-font">Access code</h2>
+              <div id="digitSlots" class="digit-row"></div>
+            </div>
+
+            <div id="puzzleBox" class="panel puzzle-panel"></div>
+          </div>
+
+          <aside class="panel side-panel">
+            <div class="status-box">
+              <span>Door status</span>
+              <div id="statusMessage">Awaiting signal</div>
+            </div>
+
+            <div id="keypadPanel" class="keypad kp-disabled">
+              <div class="key-grid">
+                <button class="key-btn">1</button>
+                <button class="key-btn">2</button>
+                <button class="key-btn">3</button>
+                <button class="key-btn">4</button>
+                <button class="key-btn">5</button>
+                <button class="key-btn">6</button>
+                <button class="key-btn">7</button>
+                <button class="key-btn">8</button>
+                <button class="key-btn">9</button>
+                <div></div>
+                <button class="key-btn">0</button>
+                <button id="clearKey" class="clear-btn">Clear</button>
+              </div>
+
+              <input id="doorInput" type="text" maxlength="4" placeholder="____" />
+              <button id="unlockBtn" class="unlock-btn" style="margin-top: 0.9rem;">Unlock</button>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultScreen" class="screen">
+      <div class="panel end-card">
+        <p id="resultTag" class="result-tag">Status</p>
+        <h2 id="resultTitle" class="result-title">Boom</h2>
+        <div id="resultSummary" class="result-summary"></div>
+        <button id="retryButton" class="primary-btn" style="margin-top: 2rem;">Retry</button>
+      </div>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
