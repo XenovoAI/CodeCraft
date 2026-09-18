@@ -38,6 +38,8 @@ Wrong puzzle answers and invalid door codes reduce the remaining time. Three wro
 - Local best-time score using `localStorage`
 - Web Audio API sound effects
 - Canvas particle effects for success and explosion states
+- On-screen operator character with live, danger, defeat, and victory animations
+- Character-specific warning, defeat, explosion, and victory sound cues
 - Responsive layout for desktop and mobile browsers
 
 ## Project Structure

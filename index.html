@@ -51,6 +51,27 @@
           </div>
 
           <aside class="panel side-panel">
+            <div class="operator-card" aria-live="polite">
+              <div class="operator-label title-font">Operator status</div>
+              <div id="operatorStage" class="operator-stage live">
+                <div class="operator-aura"></div>
+                <div class="operator-character" aria-hidden="true">
+                  <div class="operator-head">
+                    <span class="operator-eye left"></span>
+                    <span class="operator-eye right"></span>
+                    <span class="operator-mouth"></span>
+                  </div>
+                  <div class="operator-neck"></div>
+                  <div class="operator-body">
+                    <span class="operator-badge">D&amp;E</span>
+                  </div>
+                  <div class="operator-arm left"></div>
+                  <div class="operator-arm right"></div>
+                </div>
+                <div class="operator-caption" id="operatorCaption">Ready to escape</div>
+              </div>
+            </div>
+
             <div class="status-box">
               <span>Door status</span>
               <div id="statusMessage">Awaiting signal</div>
@@ -73,15 +94,46 @@
               </div>
 
               <input id="doorInput" type="text" maxlength="4" placeholder="____" />
-              <button id="unlockBtn" class="unlock-btn" style="margin-top: 0.9rem;">Unlock</button>
+              <button id="unlockBtn" class="unlock-btn escape-btn" style="margin-top: 0.9rem;">Escape</button>
             </div>
           </aside>
+        </div>
+
+        <div id="briefingOverlay" class="briefing-overlay" aria-modal="true" role="dialog" aria-labelledby="briefingTitle">
+          <div class="briefing-card">
+            <div class="briefing-kicker title-font">Incoming transmission</div>
+            <h2 id="briefingTitle" class="briefing-title title-font">Operation: Escape</h2>
+            <div class="briefing-clouds">
+              <p class="speech-cloud">The containment room is locked. Our operator is trapped beside an armed device.</p>
+              <p class="speech-cloud">Solve four security puzzles to recover the access code. Every mistake burns precious seconds.</p>
+              <p class="speech-cloud">When all four digits are revealed, enter the code and press <strong>Escape</strong> before the bomb reaches zero.</p>
+            </div>
+            <div class="briefing-actions">
+              <button id="briefingSkip" class="secondary-btn">Skip Briefing</button>
+              <button id="briefingStart" class="primary-btn">Begin Defusal</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <div id="resultScreen" class="screen">
       <div class="panel end-card">
+        <div id="resultOperatorStage" class="operator-stage result-operator live">
+          <div class="operator-aura"></div>
+          <div class="operator-character" aria-hidden="true">
+            <div class="operator-head">
+              <span class="operator-eye left"></span>
+              <span class="operator-eye right"></span>
+              <span class="operator-mouth"></span>
+            </div>
+            <div class="operator-neck"></div>
+            <div class="operator-body"><span class="operator-badge">D&amp;E</span></div>
+            <div class="operator-arm left"></div>
+            <div class="operator-arm right"></div>
+          </div>
+          <div class="operator-caption" id="resultOperatorCaption">Mission status</div>
+        </div>
         <p id="resultTag" class="result-tag">Status</p>
         <h2 id="resultTitle" class="result-title">Boom</h2>
         <div id="resultSummary" class="result-summary"></div>

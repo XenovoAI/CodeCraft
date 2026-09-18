@@ -18,6 +18,7 @@ const state = {
   puzzleOrder: [],
   puzzleIndex: 0,
   solved: false,
+  briefingOpen: false,
   highScore: Number(localStorage.getItem('defuseHighScore') || 0)
 };
 
@@ -27,6 +28,10 @@ const ui = {
   resultScreen: document.getElementById('resultScreen'),
   timer: document.getElementById('timer'),
   dangerMeterFill: document.getElementById('dangerMeterFill'),
+  operatorStage: document.getElementById('operatorStage'),
+  operatorCaption: document.getElementById('operatorCaption'),
+  resultOperatorStage: document.getElementById('resultOperatorStage'),
+  resultOperatorCaption: document.getElementById('resultOperatorCaption'),
   digitSlots: document.getElementById('digitSlots'),
   puzzleBox: document.getElementById('puzzleBox'),
   statusMessage: document.getElementById('statusMessage'),
@@ -35,7 +40,8 @@ const ui = {
   keypad: document.getElementById('keypadPanel'),
   resultTag: document.getElementById('resultTag'),
   resultTitle: document.getElementById('resultTitle'),
-  resultSummary: document.getElementById('resultSummary')
+  resultSummary: document.getElementById('resultSummary'),
+  briefingOverlay: document.getElementById('briefingOverlay')
 };
 
 const fxCanvas = document.getElementById('fxCanvas');
@@ -73,6 +79,20 @@ function updateTimerDisplay() {
   ui.timer.classList.toggle('critical', state.timeLeft <= 10);
   const meterValue = state.totalTime > 0 ? (state.timeLeft / state.totalTime) * 100 : 0;
   ui.dangerMeterFill.style.width = `${Math.max(0, Math.min(100, meterValue))}%`;
+  if (state.running && state.timeLeft <= 12) {
+    setOperatorState('nervous', 'Bomb critical - move!');
+  }
+}
+
+function setOperatorState(stateName, caption) {
+  ui.operatorStage.classList.remove('live', 'nervous', 'dead', 'victory');
+  ui.operatorStage.classList.add(stateName);
+  ui.operatorCaption.textContent = caption;
+  if (ui.resultOperatorStage) {
+    ui.resultOperatorStage.classList.remove('live', 'nervous', 'dead', 'victory');
+    ui.resultOperatorStage.classList.add(stateName);
+    ui.resultOperatorCaption.textContent = caption;
+  }
 }
 
 function flashScreenEffect(type = 'blast') {
@@ -124,6 +144,14 @@ function playVictoryFanfare() {
   setTimeout(() => playTone(1100, 0.22, 'triangle', 0.055), 220);
   setTimeout(() => playTone(1320, 0.28, 'triangle', 0.07), 360);
 }
+function playCharacterWarning() {
+  playTone(180, 0.12, 'square', 0.035);
+  setTimeout(() => playTone(130, 0.16, 'square', 0.035), 130);
+}
+function playCharacterDeath() {
+  playTone(240, 0.2, 'sawtooth', 0.055);
+  setTimeout(() => playTone(82, 0.55, 'sawtooth', 0.07), 180);
+}
 function playWrong() {
   playTone(220, 0.16, 'sawtooth', 0.05);
   setTimeout(() => playTone(140, 0.22, 'sawtooth', 0.05), 150);
@@ -136,6 +164,22 @@ function playExplosion() {
 }
 function playAlarm() {
   playTone(540, 0.08, 'square', 0.04);
+}
+
+function showBriefing() {
+  state.briefingOpen = true;
+  ui.briefingOverlay.classList.remove('hidden');
+}
+
+function launchMission() {
+  if (!state.briefingOpen) return;
+  state.briefingOpen = false;
+  state.running = true;
+  ui.briefingOverlay.classList.add('hidden');
+  setOperatorState('live', 'Ready to escape');
+  generatePuzzle();
+  startTimer();
+  playSuccess();
 }
 
 function renderDigitSlots() {
@@ -238,7 +282,7 @@ function markWrongAttempt() {
 }
 
 function beginGame() {
-  state.running = true;
+  state.running = false;
   state.timeLeft = state.totalTime;
   state.wrongAttempts = 0;
   state.solved = false;
@@ -248,11 +292,12 @@ function beginGame() {
   state.puzzleIndex = 0;
   ui.doorInput.value = '';
   ui.keypad.classList.add('kp-disabled');
+  setOperatorState('live', 'Ready to escape');
   renderDigitSlots();
   updateTimerDisplay();
   setStatus('Awaiting signal', false);
-  generatePuzzle();
-  startTimer();
+  ui.puzzleBox.innerHTML = '<div class="puzzle-content"><div class="puzzle-header">Mission briefing</div><div class="helper-text">Review the transmission, then begin defusal.</div></div>';
+  showBriefing();
 }
 
 function completePuzzle() {
@@ -276,6 +321,8 @@ function completePuzzle() {
 
 function handleWrongPuzzle() {
   setStatus('Signal mismatch', true);
+  setOperatorState('nervous', 'That was close');
+  playCharacterWarning();
   markWrongAttempt();
 }
 
@@ -511,6 +558,7 @@ function endGame(won, reason) {
 
   if (won) {
     flashScreenEffect('victory');
+    setOperatorState('victory', 'You made it out!');
     ui.resultTag.textContent = 'Mission success';
     ui.resultTitle.textContent = 'Escaped';
     const remaining = state.timeLeft;
@@ -529,6 +577,7 @@ function endGame(won, reason) {
     playVictoryFanfare();
   } else {
     flashScreenEffect('blast');
+    setOperatorState('dead', 'Operator lost');
     ui.resultTag.textContent = 'Mission failed';
     ui.resultTitle.textContent = 'Boom';
     ui.resultSummary.innerHTML = `${reason}<br>Digits collected: ${state.puzzleIndex}`;
@@ -537,6 +586,7 @@ function endGame(won, reason) {
     spawnParticles('#fca5a5', 160);
     animateParticles();
     playExplosion();
+    playCharacterDeath();
     shakeGameScreen();
   }
 
@@ -567,6 +617,16 @@ function bindControls() {
     playClick();
     beginGame();
     showScreen(ui.gameScreen);
+  });
+
+  document.getElementById('briefingStart').addEventListener('click', () => {
+    playClick();
+    launchMission();
+  });
+
+  document.getElementById('briefingSkip').addEventListener('click', () => {
+    playClick();
+    launchMission();
   });
 
   document.getElementById('retryButton').addEventListener('click', () => {
